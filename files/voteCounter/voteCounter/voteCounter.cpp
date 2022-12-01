@@ -80,20 +80,20 @@ void tentativeResult::databaseAccessor() {
 
 class electionResults {
 public:
-    static bool validate(tentativeResult unverifiedElection);
+    static bool validate(tentativeResult unvalidatedElection);
     // export as csv
     static void sendToDatabase() {}
 };
 
-bool electionResults::validate(tentativeResult unverifiedElection) {
+bool electionResults::validate(tentativeResult unvalidatedElection) {
     for (int i = 0; i < 20; i++) {
         fstream strm;
         int candidatesSize = 0;
         const int max_name_length = 20;
         bool contains = false;
-        vector <string> verifyCandidates;
-        vector <int> verifyVotesPerCandidate;
-        strm.open(unverifiedElection.getFilename(), ios_base::in);
+        vector <string> validateCandidates;
+        vector <int> validateVotesPerCandidate;
+        strm.open(unvalidatedElection.getFilename(), ios_base::in);
         if (strm.is_open()) {
             char arr[max_name_length];
             string blankChecker;
@@ -102,28 +102,28 @@ bool electionResults::validate(tentativeResult unverifiedElection) {
                 blankChecker = arr;
                 if (!blankChecker.size()) {
                     if (candidatesSize == 0) {
-                        verifyCandidates.push_back("There were no candidates.");
-                        verifyVotesPerCandidate.push_back(0);
+                        validateCandidates.push_back("There were no candidates.");
+                        validateVotesPerCandidate.push_back(0);
                     }
                     break;
                 }
                 if (candidatesSize == 0) {
                     candidatesSize++;
-                    verifyCandidates.push_back(arr);
-                    verifyVotesPerCandidate.push_back(1);
+                    validateCandidates.push_back(arr);
+                    validateVotesPerCandidate.push_back(1);
                 }
                 else {
                     for (int i = 0; i < candidatesSize; i++) {
-                        contains = (arr == verifyCandidates.at(i));
+                        contains = (arr == validateCandidates.at(i));
                         if (contains) {
-                            verifyVotesPerCandidate.at(i) += 1;
+                            validateVotesPerCandidate.at(i) += 1;
                             break;
                         }
                     }
                     if (!contains) {
                         candidatesSize++;
-                        verifyCandidates.push_back(arr);
-                        verifyVotesPerCandidate.push_back(1);
+                        validateCandidates.push_back(arr);
+                        validateVotesPerCandidate.push_back(1);
                     }
                 }
             }
@@ -132,19 +132,19 @@ bool electionResults::validate(tentativeResult unverifiedElection) {
             if (strm.is_open())
                 cout << "Stream could not close!" << endl;
         }
-        for (int j = 0; j < unverifiedElection.getVotesPerCandidate().size(); j++) {
-            if (!(verifyCandidates.at(j) == unverifiedElection.getCandidates().at(j)) || !(verifyVotesPerCandidate.at(j) == unverifiedElection.getVotesPerCandidate().at(j))) {
+        for (int j = 0; j < unvalidatedElection.getVotesPerCandidate().size(); j++) {
+            if (!(validateCandidates.at(j) == unvalidatedElection.getCandidates().at(j)) || !(validateVotesPerCandidate.at(j) == unvalidatedElection.getVotesPerCandidate().at(j))) {
                 return false;
             }
         }
     }
     fstream fout;
-    fout.open("validated" + unverifiedElection.getFilename(), ios::out);
+    fout.open("validated" + unvalidatedElection.getFilename(), ios::out);
     fout << "Election Date" << ',' << "ID" << ',' << "Candidates" << ',' << "votecounts" << ',' << "Topic" << ',' << "Start Date" << ',' << "End Date" << '\n';
-    fout << "Date would go here" << ',' << "ID would go here" << ',' << unverifiedElection.getCandidates().at(0) << ',' << unverifiedElection.getVotesPerCandidate().at(0) << ',' << "Topic would go here" << ',' << "Start Date would go here" << ',' << "End Date would go here" << '\n';
+    fout << "Date would go here" << ',' << "ID would go here" << ',' << unvalidatedElection.getCandidates().at(0) << ',' << unvalidatedElection.getVotesPerCandidate().at(0) << ',' << "Topic would go here" << ',' << "Start Date would go here" << ',' << "End Date would go here" << '\n';
 
-    for (int j = 1; j < unverifiedElection.getCandidates().size(); j++) {
-        fout << ",," << unverifiedElection.getCandidates().at(j) << ", " << unverifiedElection.getVotesPerCandidate().at(j) << '\n';
+    for (int j = 1; j < unvalidatedElection.getCandidates().size(); j++) {
+        fout << ",," << unvalidatedElection.getCandidates().at(j) << ", " << unvalidatedElection.getVotesPerCandidate().at(j) << '\n';
     }
     fout.close();
     return true;
@@ -177,7 +177,7 @@ int main()
         tabulatedResultList.push_back(PROCEDURAL_NAME(result, i));
     }
 
-    // Verify each result
+    // validate each result
     for (int i = 0; i < tabulatedResultList.size(); i++) {
         electionResults::validate(tabulatedResultList.at(i));
     }
