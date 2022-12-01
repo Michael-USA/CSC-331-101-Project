@@ -1,0 +1,10 @@
+﻿  voteCounter.cpp
+C:\Users\WORK LIKE A KING\source\repos\voteCounter\voteCounter\voteCounter.cpp(135,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\WORK LIKE A KING\source\repos\voteCounter\voteCounter\voteCounter.cpp(146,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\WORK LIKE A KING\source\repos\voteCounter\voteCounter\voteCounter.cpp(174,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\WORK LIKE A KING\source\repos\voteCounter\voteCounter\voteCounter.cpp(181,23): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 681 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  voteCounter.vcxproj -> C:\Users\WORK LIKE A KING\source\repos\voteCounter\Release\voteCounter.exe
