@@ -139,7 +139,7 @@ bool electionResults::validate(tentativeResult unverifiedElection) {
         }
     }
     fstream fout;
-    fout.open("verified" + unverifiedElection.getFilename(), ios::out);
+    fout.open("validated" + unverifiedElection.getFilename(), ios::out);
     fout << "Election Date" << ',' << "ID" << ',' << "Candidates" << ',' << "votecounts" << ',' << "Topic" << ',' << "Start Date" << ',' << "End Date" << '\n';
     fout << "Date would go here" << ',' << "ID would go here" << ',' << unverifiedElection.getCandidates().at(0) << ',' << unverifiedElection.getVotesPerCandidate().at(0) << ',' << "Topic would go here" << ',' << "Start Date would go here" << ',' << "End Date would go here" << '\n';
 
