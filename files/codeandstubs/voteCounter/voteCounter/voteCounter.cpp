@@ -9,6 +9,54 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+class event {
+protected:
+    string details;
+    string timestamp;
+public:
+    event() {
+        details = "blank";
+        timestamp = "no time";
+    }
+    event(string d, string t) {
+        details = d;
+        timestamp = t;
+    }
+};
+
+class error :event {
+private:
+    string errorCode;
+public:
+    error(string d, string t, string c) {
+        details = d;
+        timestamp = t;
+        errorCode = c;
+    }
+};
+
+
+//These are all stubs
+class eventLogger {
+private:
+    static vector<event> eventList;
+public:
+    static void sendEvents() {}
+    static error logError(string d, string t, string c) {
+        error newError(d, t, c);
+        return newError;
+    }
+    static event logEvent(string d, string t) {
+        event newEvent(d, t);
+        return newEvent;
+    }
+};
+class tabulationInterface {
+public:
+    static bool flagElectionEnd() {
+        return true;
+    }
+};
 class tentativeResult {
 private:
     vector <int> votesPerCandidate;
@@ -75,6 +123,7 @@ void tentativeResult::databaseAccessor() {
         strm.close();
         if (strm.is_open())
             cout << "Stream could not close!" << endl;
+        eventLogger::logEvent("Completed tabulating election " + filename, "Time stand in.");
     }
 }
 
@@ -134,10 +183,12 @@ bool electionResults::validate(tentativeResult unvalidatedElection) {
         }
         for (int j = 0; j < unvalidatedElection.getVotesPerCandidate().size(); j++) {
             if (!(validateCandidates.at(j) == unvalidatedElection.getCandidates().at(j)) || !(validateVotesPerCandidate.at(j) == unvalidatedElection.getVotesPerCandidate().at(j))) {
+                eventLogger::logError("Validation failed after attempt number " + i, "timeStandIn", "validation");
                 return false;
             }
         }
     }
+
     fstream fout;
     fout.open("validated" + unvalidatedElection.getFilename(), ios::out);
     fout << "Election Date" << ',' << "ID" << ',' << "Candidates" << ',' << "votecounts" << ',' << "Topic" << ',' << "Start Date" << ',' << "End Date" << '\n';
@@ -150,13 +201,7 @@ bool electionResults::validate(tentativeResult unvalidatedElection) {
     return true;
 }
 
-class tabulationInterface {
-public: 
-    //this is a stub
-    static bool flagElectionEnd() {
-        return true;
-    }
-};
+
 
 int main()
 {
@@ -184,6 +229,7 @@ int main()
     
     if (tabulationInterface::flagElectionEnd()) {
         electionResults::sendToDatabase();
+        eventLogger::sendEvents();
     }
 
     return 0;
